@@ -125,20 +125,61 @@ const App = () => {
     abilities: [],
     options: [],
   });
-
-  const [score, setScore] = useState(0);
+    const [random , setRandom] = useState();
+   const [score, setScore] = useState(0);
 
   const changeChar = () => {
-    
+    let randomNumber = Math.floor(Math.random() * 19);
+    setRandom(characters[randomNumber].name)
+    let randomCharacter = [];
+
+    while(randomCharacter.length < 4){
+      let number = Math.floor(Math.random() * 19);
+      if(number != randomNumber && randomCharacter.includes(characters[number].name) === false){
+        randomCharacter.push(characters[number].name)
+      }
+    }
+
+    let personalRandom = Math.floor(Math.random() * 4);
+
+    randomCharacter[personalRandom] = characters[randomNumber].name;
+
+    setCurrChar({
+      name: characters[randomNumber].name,
+      role: characters[randomNumber].role,
+      abilities: [...characters[randomNumber].abilities],
+      options: [{name : randomCharacter[0]} , {name : randomCharacter[1]},
+                {name : randomCharacter[2]} , {name : randomCharacter[3]}],
+    })
+
+    console.log(characters[randomNumber].name)
   };
 
   const scoreHandler = (e) => {
-   
+      e.persist()
+      setScore((prevScore) => {
+        if(e.target.id == random){
+          return prevScore + 1
+        }else{
+          return prevScore - 1
+        }
+      })
+
+
+    
   };
 
   useEffect(() => {
-   
-  });
+    
+    changeChar()
+
+  } , []);
+  useEffect(() => {
+    
+    changeChar()
+
+  } , [score]);
+
   return (
     <div id="main">
       <div className="container">
@@ -149,11 +190,12 @@ const App = () => {
           <h4>Role: {currChar.role}</h4>
           {currChar.abilities.join()}
           <div className="options">
-            {currChar.options.map((option) => (
-              <button   onClick={scoreHandler}>
+            {currChar.options.map((option) => ( 
+              <button key={option.name} id={option.name}  onClick={scoreHandler}>
                 {option.name}
               </button>
-            ))}
+            ))
+            }
           </div>
         </div>
       </div>
